@@ -24,14 +24,19 @@ def answer_question(question):
 
     # Send a message to the Claude model via the Anthropic client
     response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",  # You can replace this with the correct model if necessary
+        model="claude-3-5-sonnet-20241022",  # Replace with the correct model if necessary
         max_tokens=100,
         messages=[{"role": "user", "content": prompt}],
     )
-    return response["completion"].strip()
+
+    try:
+        text_block = response.content[0]  # Get the first TextBlock
+        return text_block.text.strip()  
+    except (IndexError, AttributeError) as e:
+        print("Error accessing response content:", e)
+        return "Sorry, I couldn't generate an answer."
 
 
-# Example usage for testing (can be removed later)
 if __name__ == "__main__":
     question = "What is the capital of France?"
     print(answer_question(question))
